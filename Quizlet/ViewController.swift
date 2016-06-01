@@ -12,23 +12,23 @@ import AudioToolbox
 
 class ViewController: UIViewController {
     
-    let questionsPerRound = 4
-    var questionsAsked = 0
+    let questionsPerRound = 4 // Number of questions per round
+    var questionsAsked = 0    // Number of questions already asked
     var correctQuestions = 0
     var indexOfSelectedQuestion: Int = 0
     var gameSound: SystemSoundID = 0
     var wrongAnswerSound: SystemSoundID = 1
     var correctAnswerSound: SystemSoundID = 2
     var gameOverSound: SystemSoundID = 3
-    var askedQuestions = [Int]()
+    var askedQuestions = [Int]()    // array of the indexs of questions already asked, reset after every round
     
     
     @IBOutlet weak var questionField: UILabel!
     @IBOutlet weak var playAgainButton: UIButton!
-    @IBOutlet weak var aButton: UIButton!
-    @IBOutlet weak var bButton: UIButton!
-    @IBOutlet weak var cButton: UIButton!
-    @IBOutlet weak var dButton: UIButton!
+    @IBOutlet weak var aButton: UIButton! // option A
+    @IBOutlet weak var bButton: UIButton! // option B
+    @IBOutlet weak var cButton: UIButton! // option C
+    @IBOutlet weak var dButton: UIButton! // option D
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,16 +43,21 @@ class ViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
+    
+    // This function Displays the Questions to the view.
     func displayQuestion() {
         
         indexOfSelectedQuestion = GetRandomNumber(quiz.count)
         
+        
+        //Setting all buttons to the nutrual color
         aButton.backgroundColor = AnswerColor
         bButton.backgroundColor = AnswerColor
         cButton.backgroundColor = AnswerColor
         dButton.backgroundColor = AnswerColor
         
         questionField.text = quiz[indexOfSelectedQuestion].question
+        //Shuffling Answer choices so that they dont always show up in the correct order.
         ShuffleAnswers(quiz[indexOfSelectedQuestion])
         
         playAgainButton.hidden = true
@@ -71,7 +76,7 @@ class ViewController: UIViewController {
         questionField.text = "Way to go!\nYou got \(correctQuestions) out of \(questionsPerRound) correct!"
         
     }
-    
+    // Onclick of button we are checking here if the answer is correct. Correct answers have a sender.tag = 1; all others have a tag of 0
     @IBAction func checkAnswer(sender: UIButton) {
         // Increment the questions asked counter
         questionsAsked += 1
@@ -93,9 +98,11 @@ class ViewController: UIViewController {
         }
         
         
-        
+        //Auto load the next question with a 2 second delay.
         loadNextRoundWithDelay(seconds: 2)
     }
+    
+    //This function just shows/turns the correct answer green. CorrectLabelColor is a const. found in ColorModel.
     func ShowCorrectAnswer() {
         
         if (aButton.tag == 1){
@@ -117,43 +124,7 @@ class ViewController: UIViewController {
         
     }
     
-    func nextRound() {
-        if questionsAsked == questionsPerRound {
-            // Game is over
-            displayScore()
-            playGameOverSound()
-        } else {
-            // Continue game
-            displayQuestion()
-        }
-    }
-    
-    @IBAction func playAgain() {
-        // Show the answer buttons
-        aButton.hidden = false
-        bButton.hidden = false
-        cButton.hidden = false
-        dButton.hidden = false
-        
-        questionsAsked = 0
-        correctQuestions = 0
-        askedQuestions = [Int]()
-        nextRound()
-    }
-    
-    func GetRandomNumber(seed: Int) -> Int{
-        
-        var number = 0;
-        repeat {
-            number = GKRandomSource.sharedRandom().nextIntWithUpperBound(seed)
-            
-            
-        }while askedQuestions.contains(number)
-        
-        askedQuestions.append(number)
-        return number
-    }
-    
+    //Shuffles the choices around so not every answer is A.
     func ShuffleAnswers (q:Question) {
         
         let shuffleButtons  =  [aButton,bButton,cButton,dButton]
@@ -201,13 +172,52 @@ class ViewController: UIViewController {
         }
         
     }
+
+    
+    func nextRound() {
+        if questionsAsked == questionsPerRound {
+            // Game is over
+            displayScore()
+            playGameOverSound()
+        } else {
+            // Continue game
+            displayQuestion()
+        }
+    }
+    
+    @IBAction func playAgain() {
+        // Show the answer buttons
+        aButton.hidden = false
+        bButton.hidden = false
+        cButton.hidden = false
+        dButton.hidden = false
+        
+        questionsAsked = 0
+        correctQuestions = 0
+        askedQuestions = [Int]()
+        nextRound()
+    }
+    
+    //This function just returns a random number and also makes sure that the random number it returns has not been choosen before.
+    //This function is used to select a question from the data set of questions in QuestionModel.swift
+    
+    func GetRandomNumber(seed: Int) -> Int{
+        
+        var number = 0;
+        repeat {
+            number = GKRandomSource.sharedRandom().nextIntWithUpperBound(seed)
+            
+            
+        }while askedQuestions.contains(number)
+        
+        askedQuestions.append(number)
+        return number
+    }
+    
+        
     
     
-    
-    
-    // MARK: Helper Methods
-    
-    func loadNextRoundWithDelay(seconds seconds: Int) {
+        func loadNextRoundWithDelay(seconds seconds: Int) {
         // Converts a delay in seconds to nanoseconds as signed 64 bit integer
         let delay = Int64(NSEC_PER_SEC * UInt64(seconds))
         // Calculates a time value to execute the method given current time and delay

@@ -8,12 +8,13 @@
 
 import Foundation
 
+// enum used to classify the questions to change the view according to question asked
 enum QuestionType {
     case TrueFalse
     case MutliChoice
 }
 
-
+//Question class that can hold both True and False questions and Multi-choice questions
 class Question
 {
     let type : QuestionType
@@ -43,7 +44,7 @@ class Question
     
 }
 
-
+//The data set of questions asked current count is 11 questions 4 asked per round. 
 
 let quiz = [Question (type: QuestionType.MutliChoice, question :"Where was the 1986 World Cup held?",answer:"Mexico",wrongChoice1: "Brazil",wrongChoice2: "Argentina",wrongChoice3: "Germany"),
             Question (type: QuestionType.MutliChoice, question :"Which Country is the winner of FIFA World Cup 2014?",answer:"Germany",wrongChoice1: "Brazil",wrongChoice2: "Netherlands",wrongChoice3: "England"),
